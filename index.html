@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Birthday Wish</title>
+    <!-- We'll use the Inter font for a clean, modern look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /*
+        ========================================
+        1. GLOBAL STYLES & SETUP
+        ========================================
+        */
+        :root {
+            --color-bg-dark: #0a021a;
+            --color-bg-light: #f3f0ff;
+            --color-primary: #8a4fff;
+            --color-secondary: #ff4fe8;
+            --color-accent: #00f2ea;
+            --color-text-light: #ffffff;
+            --color-text-dark: #333;
+            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --shadow-glow: 0 0 30px var(--color-primary), 0 0 60px var(--color-secondary);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-bg-dark);
+        }
+
+        /* Utility class to hide pages */
+        .hidden {
+            display: none !important;
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        /* * Page containers act as our "scenes"
+         * We use grid to easily center content
+        */
+        .page-container {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            place-items: center;
+            position: relative;
+            perspective: 1500px; /* Enable 3D for child elements */
+            overflow: hidden;
+        }
+
+        /*
+        ========================================
+        2. PAGE 1: THE GIFT BOX
+        ========================================
+        */
+        .giftbox-page {
+            background: radial-gradient(circle, #301a50 0%, var(--color-bg-dark) 80%);
+            transition: opacity 0.5s ease-out;
+        }
+
+        .prompt-text {
+            color: var(--color-text-light);
+            font-size: 1.2rem;
+            font-weight: 700;
+            position: absolute;
+            bottom: 20%;
+            text-align: center;
+            opacity: 0;
+            animation: fadeIn 2s ease 1s forwards, pulse 2.5s ease-in-out 3s infinite;
+        }
+
+        .giftbox-container {
+            position: relative;
+            transform-style: preserve-3d;
+            transform: scale(0.9); /* Start slightly smaller */
+            animation: fadeIn 2s ease 0.5s forwards;
+            opacity: 0;
+        }
+
+        .giftbox {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            transform-style: preserve-3d;
+            transform: rotateX(-20deg) rotateY(30deg);
+            transition: transform 1s ease-in-out;
+        }
+
+        .box-face {
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* The 3D box construction */
+        .box-bottom { transform: translateZ(-125px) rotateX(-90deg); }
+        .box-body { height: 150px; top: 100px; /* Position body below lid */ }
+        .box-front  { height: 150px; transform: translateZ(125px); }
+        .box-back   { height: 150px; transform: translateZ(-125px) rotateY(180deg); }
+        .box-left   { height: 150px; transform: translateX(-125px) rotateY(-90deg); }
+        .box-right  { height: 150px; transform: translateX(125px) rotateY(90deg); }
+
+        /* The 3D lid construction */
+        .lid-group {
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            top: -100px; /* Lid sits 100px high */
+            transform-style: preserve-3d;
+            transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        .lid-top    { height: 100px; transform: translateZ(-125px) rotateX(90deg) translateY(-125px); transform-origin: top; }
+        .lid-front  { height: 100px; transform: translateZ(125px); transform-origin: top; transition-delay: 0.2s; }
+        .lid-back   { height: 100px; transform: translateZ(-125px) rotateY(180deg); transform-origin: top; transition-delay: 0.3s; }
+        .lid-left   { height: 100px; transform: translateX(-125px) rotateY(-90deg); transform-origin: top; transition-delay: 0.4s; }
+        .lid-right  { height: 100px; transform: translateX(125px) rotateY(90deg); transform-origin: top; transition-delay: 0.5s; }
+
+        /* The bow */
+        .bow-group {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: -100px; /* On top of the lid */
+            transform: translateZ(0); /* Bring to front */
+            cursor: pointer;
+            transition: transform 0.8s ease, opacity 0.8s ease;
+            z-index: 10;
+        }
+
+        /* Bow ribbon */
+        .bow-group::before, .bow-group::after {
+            content: '';
+            position: absolute;
+            background: var(--color-accent);
+            box-shadow: 0 0 10px var(--color-accent);
+        }
+        .bow-group::before { /* Vertical */
+            width: 40px;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .bow-group::after { /* Horizontal */
+            width: 100%;
+            height: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Bow tie */
+        .bow-tie {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: var(--color-accent);
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) rotate(45deg);
+            border-radius: 20px;
+            z-index: 11;
+        }
+        .bow-tie::before, .bow-tie::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: var(--color-accent);
+            border-radius: 50%;
+        }
+        .bow-tie::before { left: -40px; }
+        .bow-tie::after { top: -40px; }
+
+        /* Giftbox "Open" Animations */
+        .giftbox-page.open .lid-group {
+            transform: translateY(-200px) rotateX(30deg) rotateY(30deg);
+        }
+        .giftbox-page.open .lid-front { transform: translateZ(125px) rotateX(120deg); }
+        .giftbox-page.open .lid-back { transform: translateZ(-125px) rotateY(180deg) rotateX(-120deg); }
+        .giftbox-page.open .lid-left { transform: translateX(-125px) rotateY(-90deg) rotateX(-120deg); }
+        .giftbox-page.open .lid-right { transform: translateX(125px) rotateY(90deg) rotateX(120deg); }
+        
+        .giftbox-page.open .bow-group {
+            transform: scale(0);
+            opacity: 0;
+        }
+        .giftbox-page.open .prompt-text {
+            animation: fadeOut 0.5s ease forwards;
+        }
+
+        /* Fullscreen transition glow */
+        .transition-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 1px;
+            height: 1px;
+            background: var(--color-bg-light);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            z-index: 100;
+            pointer-events: none;
+            transition: transform 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .transition-glow.animate {
+            transform: translate(-50%, -50%) scale(3000); /* Large enough to cover screen */
+        }
+
+        /*
+        ========================================
+        3. PAGE 2: 4D CARD & AI AGENT
+        ========================================
+        */
+        .card-page {
+            background: radial-gradient(circle, #2a0a50 0%, var(--color-bg-dark) 80%);
+            opacity: 0;
+            animation: fadeIn 1s ease 0.5s forwards;
+        }
+
+        /* 4D Scene */
+        .scene-4d {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.1s linear; /* For mousemove parallax */
+        }
+        
+        /* Mobile-only "breathing" animation */
+        body.is-mobile .scene-4d {
+            animation: subtle-float 10s ease-in-out infinite;
+        }
+
+        .layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            display: grid;
+            place-items: center;
+        }
+
+        /* Layer 1: Background (farthest) */
+        .layer-bg {
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(138, 79, 255, 0.3), transparent 40%),
+                radial-gradient(circle at 80% 30%, rgba(255, 79, 232, 0.3), transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(0, 242, 234, 0.2), transparent 30%);
+            transform: translateZ(-150px) scale(1.5); /* Push back and scale up */
+        }
+
+        /* Layer 2: Particles (middle) */
+        .layer-particles {
+            transform: translateZ(-80px) scale(1.2);
+        }
+
+        /* Layer 3: Card (closest) */
+        .layer-card {
+            transform: translateZ(0px);
+        }
+
+        /* 3D Card */
+        .card-3d-container {
+            perspective: 2000px;
+        }
+        .card-3d {
+            width: 340px;
+            height: 500px;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateY(20deg); /* Start slightly open */
+            transition: transform 1.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            cursor: default;
+        }
+        .card-3d.open {
+            transform: rotateY(-160deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+        .card-front {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            display: grid;
+            place-items: center;
+            color: var(--color-text-light);
+            font-size: 2rem;
+            font-weight: 900;
+            text-align: center;
+            padding: 20px;
+            /* Placeholder graphic */
+            background-image: 
+                linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h4v-9H0v-1h4v-9H0v-1h4v-9H0v-1h4v-9H0v-1h4v-9H0v-1h4v-9H0v-1h4v-9H0v-1h4V0h1v4h9V0h1v4h9V0h1v4h9V0h1v4h9V0h1v4h9V0h1v4h9V0h1v4h9V0h1v4h9V0h1v4h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-_9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm1m0 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3Cpath d='M6 5V0H5v5H0v1h5v94h1V6h94V5H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .card-inside {
+            background: var(--color-bg-light);
+            transform: rotateY(180deg);
+            color: var(--color-text-dark);
+            padding: 30px;
+        }
+        .card-inside h2 {
+            color: var(--color-primary);
+            font-weight: 900;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+        .card-inside p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        .card-inside strong {
+            color: var(--color-secondary);
+            font-weight: 700;
+        }
+        
+        /* 4D Living Border */
+        .living-border-sparkle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--color-accent);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--color-accent), 0 0 20px var(--color-accent);
+            animation: sparkle-flow 10s linear infinite;
+            opacity: 0;
+        }
+        /* Create multiple sparkles with different delays */
+        .living-border-sparkle:nth-child(1) { animation-delay: 0s; }
+        .living-border-sparkle:nth-child(2) { animation-delay: 2s; }
+        .living-border-sparkle:nth-child(3) { animation-delay: 4s; }
+        .living-border-sparkle:nth-child(4) { animation-delay: 6s; }
+        .living-border-sparkle:nth-child(5) { animation-delay: 8s; }
+
+        @keyframes sparkle-flow {
+            0%   { top: 0; left: 0; opacity: 1; }
+            25%  { top: 0; left: 100%; opacity: 1; }
+            50%  { top: 100%; left: 100%; opacity: 1; }
+            75%  { top: 100%; left: 0; opacity: 1; }
+            100% { top: 0; left: 0; opacity: 0; }
+        }
+
+        /* 4D Confetti Click */
+        .confetti-particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 1;
+            /* Animation set by JS */
+            animation: burst 0.8s ease-out forwards;
+        }
+        @keyframes burst {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /*
+        ========================================
+        4. AI WISH AGENT (CHATBOT)
+        ========================================
+        */
+        .ai-agent-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 320px;
+            background: rgba(20, 10, 40, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: var(--shadow-lg);
+            color: var(--color-text-light);
+            z-index: 100;
+            transform: translateY(calc(100% + 50px)); /* Start off-screen */
+            transition: transform 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .ai-agent-container.visible {
+            transform: translateY(0);
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .ai-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--color-accent);
+            box-shadow: 0 0 15px var(--color-accent);
+            margin-right: 10px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        .ai-header span {
+            font-weight: 700;
+        }
+
+        .ai-chat-box {
+            height: 250px;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            /* Custom scrollbar */
+            scrollbar-width: thin;
+            scrollbar-color: var(--color-primary) transparent;
+        }
+
+        .chat-message {
+            max-width: 85%;
+            padding: 10px 15px;
+            border-radius: 12px;
+            line-height: 1.5;
+            font-size: 0.95rem;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeIn 0.5s ease forwards;
+        }
+        .chat-message.agent {
+            background: rgba(255, 255, 255, 0.1);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .chat-message.user {
+            background: var(--color-primary);
+            color: var(--color-text-light);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        /* "Typing..." indicator */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 10px 15px;
+        }
+        .typing-indicator span {
+            font-style: italic;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .typing-indicator div {
+            width: 6px;
+            height: 6px;
+            background: var(--color-accent);
+            border-radius: 50%;
+            animation: typing-dots 1.2s infinite ease-in-out;
+        }
+        .typing-indicator div:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator div:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing-dots {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+
+        .ai-input-area {
+            display: none; /* Hidden by default */
+            padding: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            gap: 10px;
+        }
+        #user-goal-input {
+            flex-grow: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 10px;
+            color: var(--color-text-light);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+        }
+        #user-goal-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        #send-goal-btn {
+            background: var(--color-primary);
+            border: none;
+            color: var(--color-text-light);
+            font-weight: 700;
+            padding: 0 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        #send-goal-btn:hover {
+            background: var(--color-secondary);
+        }
+        
+        /*
+        ========================================
+        5. CONTROLS & RESPONSIVENESS
+        ========================================
+        */
+        .control-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--color-text-light);
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 101;
+            backdrop-filter: blur(5px);
+            font-weight: 700;
+        }
+
+        /* Keyframe Animations */
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        @keyframes fadeOut {
+            to { opacity: 0; }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        @keyframes subtle-float {
+            0%, 100% { transform: translateY(0) rotateX(-5deg); }
+            50% { transform: translateY(-15px) rotateX(5deg); }
+        }
+
+        /* Responsive Breakpoint */
+        @media (max-width: 600px) {
+            .giftbox {
+                transform: scale(0.8) rotateX(-20deg) rotateY(30deg);
+            }
+            .prompt-text {
+                font-size: 1rem;
+                padding: 0 20px;
+            }
+
+            .card-3d {
+                width: 300px;
+                height: 440px;
+            }
+            .card-inside {
+                padding: 20px;
+            }
+            .card-inside h2 {
+                font-size: 1.5rem;
+            }
+            .card-inside p {
+                font-size: 0.95rem;
+            }
+
+            .ai-agent-container {
+                width: calc(100% - 30px);
+                bottom: 15px;
+                right: 15px;
+                left: 15px;
+            }
+            .ai-chat-box {
+                height: 200px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- 
+    ========================================
+    PAGE 1: THE INTERACTIVE GIFT BOX
+    ========================================
+    -->
+    <main id="page-giftbox" class="page-container giftbox-page">
+        <div class="giftbox-container">
+            <div class="giftbox" id="giftbox">
+                <!-- 3D Lid -->
+                <div class="lid-group">
+                    <div class="box-face lid-top"></div>
+                    <div class="box-face lid-front"></div>
+                    <div class="box-face lid-back"></div>
+                    <div class="box-face lid-left"></div>
+                    <div class="box-face lid-right"></div>
+                </div>
+                <!-- 3D Box Body -->
+                <div class="box-body">
+                    <div class="box-face box-bottom"></div>
+                    <div class="box-face box-front"></div>
+                    <div class="box-face box-back"></div>
+                    <div class="box-face box-left"></div>
+                    <div class="box-face box-right"></div>
+                </div>
+                <!-- Bow (Click Target) -->
+                <div class="bow-group" id="bow-btn">
+                    <div class="bow-tie"></div>
+                </div>
+            </div>
+        </div>
+        <p class="prompt-text">Click the bow to open...</p>
+        
+        <!-- Fullscreen white glow for transition -->
+        <div class="transition-glow" id="transition-glow"></div>
+    </main>
+
+    <!-- 
+    ========================================
+    PAGE 2: THE 4D CELEBRATION & AI AGENT
+    ========================================
+    -->
+    <main id="page-card" class="page-container card-page hidden">
+        
+        <!-- 4D Scene Container -->
+        <div class="scene-4d" id="scene-4d">
+            <!-- Layer 1: Background -->
+            <div class="layer layer-bg"></div>
+            
+            <!-- Layer 2: Particles (future enhancement) -->
+            <div class="layer layer-particles" id="particle-layer"></div>
+
+            <!-- Layer 3: 3D Card -->
+            <div class="layer layer-card">
+                <div class="card-3d-container">
+                    <div class="card-3d" id="card-3d">
+                        <div class="card-face card-front">
+                            A Special Wish<br>Just For You Bro ✨
+                        </div>
+                        <div class="card-face card-inside">
+                            <h2 class="card-title">Happy Birthday Gentleman, <span id="name-display-card"></span>!</h2>
+                            <p id="wish-message">A special wish is being prepared for you...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- "Living" Border -->
+        <div class="living-border" id="living-border">
+            <div class="living-border-sparkle"></div>
+            <div class="living-border-sparkle"></div>
+            <div class="living-border-sparkle"></div>
+            <div class="living-border-sparkle"></div>
+            <div class="living-border-sparkle"></div>
+        </div>
+
+        <!-- AI Wish Agent -->
+        <div class="ai-agent-container" id="ai-agent">
+            <div class="ai-header">
+                <div class="ai-avatar"></div>
+                <span>Wish Customizer</span>
+            </div>
+            <div class="ai-chat-box" id="ai-chat-box">
+                <!-- Messages will be injected by JS -->
+            </div>
+            <div class="ai-input-area" id="ai-input-area">
+                <input type="text" id="user-goal-input" placeholder="Your biggest goal...">
+                <button id="send-goal-btn" aria-label="Send Goal">Send</button>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <button id="mute-btn" class="control-btn" aria-label="Mute Audio">Mute</button>
+        
+        <!-- Background Music -->
+        <!-- NOTE: Using a placeholder royalty-free track. Autoplay may be blocked by browsers. -->
+        <audio id="bg-music" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+
+    </main>
+
+    <script>
+        /*
+        ========================================
+        AI-Powered 4D Birthday Card - SCRIPT
+        ========================================
+        */
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- STATE & CONFIG ---
+            // Detect mobile to disable mouse-based parallax
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            let audioMuted = false;
+            let userName = "Birthday Star"; // Default name
+
+            // --- DOM ELEMENTS (PAGE 1) ---
+            const pageGiftbox = document.getElementById('page-giftbox');
+            const bowBtn = document.getElementById('bow-btn');
+            const transitionGlow = document.getElementById('transition-glow');
+            
+            // --- DOM ELEMENTS (PAGE 2) ---
+            const pageCard = document.getElementById('page-card');
+            const scene4d = document.getElementById('scene-4d');
+            const card3d = document.getElementById('card-3d');
+            const nameDisplay = document.getElementById('name-display-card');
+            const wishMessage = document.getElementById('wish-message');
+            const bgMusic = document.getElementById('bg-music');
+            const muteBtn = document.getElementById('mute-btn');
+            
+            // --- DOM ELEMENTS (AI AGENT) ---
+            const aiAgent = document.getElementById('ai-agent');
+            const aiChatBox = document.getElementById('ai-chat-box');
+            const aiInputArea = document.getElementById('ai-input-area');
+            const userGoalInput = document.getElementById('user-goal-input');
+            const sendGoalBtn = document.getElementById('send-goal-btn');
+
+
+            /**
+             * Initializes the first page (Gift Box)
+             */
+            function initGiftboxPage() {
+                bowBtn.addEventListener('click', openGiftbox);
+            }
+
+            /**
+             * Handles the giftbox opening animation and page transition
+             */
+            function openGiftbox() {
+                // 1. Add 'open' class to animate the box lids and bow
+                pageGiftbox.classList.add('open');
+
+                // 2. Animate the transition glow
+                transitionGlow.classList.add('animate');
+                
+                // 3. When the glow animation is done, switch pages
+                transitionGlow.addEventListener('transitionend', () => {
+                    pageGiftbox.classList.add('hidden');
+                    pageCard.classList.remove('hidden');
+                    
+                    // 4. Initialize the second page
+                    initCardPage();
+                }, { once: true }); // Only run this event listener once
+            }
+
+            /**
+             * Initializes the second page (4D Card)
+             */
+            function initCardPage() {
+                // 1. Parse URL for ?name=...
+                parseURLParams();
+                nameDisplay.textContent = userName;
+
+                // 2. Add 'is-mobile' class to body if on mobile
+                // This controls the CSS for parallax vs. floating
+                document.body.classList.toggle('is-mobile', isMobile);
+
+                // 3. Stagger the card opening animation
+                setTimeout(openCard, 500);
+
+                // 4. Set up all event listeners for this page
+                setupCardPageListeners();
+            }
+
+            /**
+             * Reads the 'name' query parameter from the URL
+             */
+            function parseURLParams() {
+                const params = new URLSearchParams(window.location.search);
+                const name = params.get('name');
+                if (name) {
+                    // Basic sanitization
+                    userName = name.replace(/<[^>]*>?/gm, '');
+                }
+            }
+
+            /**
+             * Triggers the 3D card "open" animation
+             */
+            function openCard() {
+                card3d.classList.add('open');
+                
+                // When the card is finished opening, start music and AI
+                card3d.addEventListener('transitionend', () => {
+                    playMusic();
+                    startAiAgent();
+                }, { once: true });
+            }
+
+            /**
+             * Sets up all event listeners for Page 2
+             */
+            function setupCardPageListeners() {
+                muteBtn.addEventListener('click', toggleMute);
+                sendGoalBtn.addEventListener('click', handleUserGoalSubmit);
+                userGoalInput.addEventListener('keyup', (e) => {
+                    if (e.key === 'Enter') {
+                        handleUserGoalSubmit();
+                    }
+                });
+
+                // 4D Parallax effect (Desktop only)
+                if (!isMobile) {
+                    pageCard.addEventListener('mousemove', onMouseMoveParallax);
+                }
+
+                // Confetti Burst (on background click)
+                pageCard.addEventListener('click', createConfettiBurst);
+            }
+
+            /**
+             * Tries to play the background music
+             */
+            function playMusic() {
+                if (!audioMuted) {
+                    // Browser autoplay policy requires user interaction first.
+                    // We'll try, but catch the inevitable error.
+                    bgMusic.play().catch(error => {
+                        console.warn("Audio autoplay was blocked by the browser. A user click is required.");
+                        // We can add a "Click to play music" button if needed
+                    });
+                }
+            }
+
+            /**
+             * Toggles the audio mute state
+             */
+            function toggleMute() {
+                audioMuted = !audioMuted;
+                bgMusic.muted = audioMuted;
+                muteBtn.textContent = audioMuted ? 'Unmute' : 'Mute';
+                muteBtn.setAttribute('aria-label', audioMuted ? 'Unmute Audio' : 'Mute Audio');
+            }
+
+            /**
+             * Handles the 4D parallax effect on mouse move
+             * @param {MouseEvent} e
+             */
+            function onMouseMoveParallax(e) {
+                const { clientWidth, clientHeight } = document.documentElement;
+                
+                // Calculate position from -0.5 to 0.5
+                const xPercent = (e.clientX / clientWidth) - 0.5;
+                const yPercent = (e.clientY / clientHeight) - 0.5;
+                
+                // Apply a gentle rotation to the entire 4D scene
+                // The layers inside move at different rates due to `translateZ`
+                const rotateX = yPercent * -5; // Invert Y for natural feel
+                const rotateY = xPercent * 10;
+                
+                scene4d.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            }
+
+            /**
+             * Creates a burst of confetti particles at click coordinates
+             * @param {MouseEvent} e
+             */
+            function createConfettiBurst(e) {
+                // Don't burst if clicking on the card or AI agent
+                if (e.target.closest('.card-3d') || e.target.closest('.ai-agent-container')) {
+                    return;
+                }
+
+                const burstCount = 20;
+                const colors = ['var(--color-primary)', 'var(--color-secondary)', 'var(--color-accent)'];
+                
+                for (let i = 0; i < burstCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('confetti-particle');
+                    
+                    // Position at click
+                    particle.style.left = `${e.clientX}px`;
+                    particle.style.top = `${e.clientY}px`;
+                    
+                    // Randomize color and animation properties
+                    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    const tx = (Math.random() - 0.5) * 200; // Random X end position
+                    const ty = (Math.random() - 0.5) * 200; // Random Y end position
+                    particle.style.setProperty('--tx', `${tx}px`);
+                    particle.style.setProperty('--ty', `${ty}px`);
+
+                    pageCard.appendChild(particle);
+
+                    // Remove particle after animation
+                    particle.addEventListener('animationend', () => {
+                        particle.remove();
+                    });
+                }
+            }
+
+
+            // --- AI AGENT LOGIC ---
+
+            /**
+             * Starts the AI agent chat sequence
+             */
+            async function startAiAgent() {
+                // 1. Show the agent window
+                aiAgent.classList.add('visible');
+                
+                // 2. Sequence of messages
+                await agentTyping(1500);
+                addAgentMessage(`Hello, <strong>${userName}</strong>! I'm your personal 'Wish Customizer' for this year.`);
+                
+                await agentTyping(2000);
+                addAgentMessage("To create the *perfect* wish... what is <strong>one big goal</strong> you want to achieve this year? (e.g., 'learn guitar', 'get a promotion', 'travel more')");
+                
+                // 3. Show the user input field
+                aiInputArea.style.display = 'flex';
+                userGoalInput.focus();
+            }
+
+            /**
+             * Handles the user submitting their goal
+             */
+            async function handleUserGoalSubmit() {
+                const goal = userGoalInput.value.trim();
+                if (!goal) return; // Ignore empty submissions
+
+                // 1. Add user's message to chat
+                addUserMessage(goal);
+
+                // 2. Hide input area
+                userGoalInput.value = '';
+                aiInputArea.style.display = 'none';
+
+                // 3. Simulate "thinking"
+                await agentTyping(2500, "Crafting your wish...");
+
+                // 4. Construct and deliver the final wish
+                // Sanitize goal before inserting
+                const sanitizedGoal = goal.replace(/<[^>]*>?/gm, '');
+                
+                const finalWish = `That's an amazing goal! My official wish for you is: May this year be filled with success, joy, and incredible progress as you <strong>${sanitizedGoal}</strong>. Happy Birthday!`;
+                
+                addAgentMessage(finalWish);
+
+                // 5. THE FINISHER: Update the main card!
+                updateCardWish(finalWish);
+            }
+
+            /**
+             * Adds a message from the AGENT to the chat box
+             * @param {string} html - The message content (can be HTML)
+             */
+            function addAgentMessage(html) {
+                const msg = document.createElement('div');
+                msg.classList.add('chat-message', 'agent');
+                msg.innerHTML = html;
+                aiChatBox.appendChild(msg);
+                scrollToChatBottom();
+            }
+
+            /**
+             * Adds a message from the USER to the chat box
+             * @param {string} text - The message content (plain text)
+             */
+            function addUserMessage(text) {
+                const msg = document.createElement('div');
+                msg.classList.add('chat-message', 'user');
+                msg.textContent = text;
+                aiChatBox.appendChild(msg);
+                scrollToChatBottom();
+            }
+
+            /**
+            * Shows a typing indicator for a specified duration
+            * @param {number} duration - Time in ms to show indicator
+            * @param {string} [text=""] - Optional text to show
+            * @returns {Promise<void>}
+            */
+            function agentTyping(duration, text = "") {
+                const indicator = document.createElement('div');
+                indicator.classList.add('typing-indicator');
+                indicator.innerHTML = `
+                    <div></div><div></div><div></div>
+                    ${text ? `<span>${text}</span>` : ''}
+                `;
+                aiChatBox.appendChild(indicator);
+                scrollToChatBottom();
+                
+                // Return a promise that resolves after the duration
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        indicator.remove();
+                        resolve();
+                    }, duration);
+                });
+            }
+
+            /**
+             * Updates the main 3D card's message
+             * @param {string} wishHTML - The new wish text (as HTML)
+             */
+            function updateCardWish(wishHTML) {
+                wishMessage.innerHTML = wishHTML;
+            }
+
+            /**
+             * Helper to keep the chat box scrolled to the bottom
+             */
+            function scrollToChatBottom() {
+                aiChatBox.scrollTop = aiChatBox.scrollHeight;
+            }
+
+            // --- APP INITIALIZATION ---
+            initGiftboxPage();
+        });
+    </script>
+</body>
+</html>
